@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faral @ Kurechii — Internship Plan</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #f97316;
+      --orange-light: #fff7ed;
+      --orange-border: #fed7aa;
+      --grey-bg: #f9fafb;
+      --grey-muted: #6b7280;
+      --grey-border: #e5e7eb;
+      --text: #111827;
+      --text-light: #374151;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --green-border: #bbf7d0;
+      --blue-light: #eff6ff;
+      --blue-border: #bfdbfe;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+
+    /* ── Header ── */
+    header {
+      background: var(--text);
+      color: #fff;
+      padding: 40px 20px 32px;
+      margin-bottom: 32px;
+    }
+    .header-inner { max-width: 900px; margin: 0 auto; }
+    header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+    header .subtitle { color: #d1d5db; font-size: 0.9rem; margin-bottom: 20px; }
+    .week-badge {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .progress-bar {
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .progress-seg {
+      flex: 1;
+      min-width: 20px;
+      height: 8px;
+      border-radius: 4px;
+      background: #374151;
+    }
+    .progress-seg.done { background: #6b7280; }
+    .progress-seg.current { background: var(--orange); }
+    .progress-seg.upcoming { background: #374151; }
+
+    /* ── Section headers ── */
+    h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 36px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--grey-border);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── This Week card ── */
+    .this-week-card {
+      background: var(--orange-light);
+      border: 1px solid var(--orange-border);
+      border-left: 4px solid var(--orange);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 8px;
+    }
+    .this-week-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+    .this-week-card .tw-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .tw-item label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--grey-muted);
+      margin-bottom: 4px;
+    }
+    .tw-item p { font-size: 0.9rem; color: var(--text-light); }
+
+    /* ── Game Concept card ── */
+    .concept-card {
+      border: 1px solid var(--grey-border);
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+    .concept-card.approved {
+      background: var(--green-light);
+      border-color: var(--green-border);
+    }
+    .concept-card .concept-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .concept-card h3 { font-size: 1rem; font-weight: 700; }
+    .status-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pill-pending { background: #fef3c7; color: #92400e; }
+    .pill-approved { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+    .pill-inprogress { background: var(--orange-light); color: #c2410c; border: 1px solid var(--orange-border); }
+    .pill-done { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+    .criteria-list { list-style: none; }
+    .criteria-list li {
+      padding: 6px 0;
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      border-bottom: 1px solid var(--grey-border);
+    }
+    .criteria-list li:last-child { border-bottom: none; }
+    .criteria-list li::before {
+      content: "○";
+      position: absolute;
+      left: 0;
+      color: var(--grey-muted);
+      font-size: 0.75rem;
+      top: 8px;
+    }
+    .concept-card.approved .criteria-list li::before { content: "✓"; color: var(--green); }
+
+    /* ── Schedule table ── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    th {
+      background: var(--grey-bg);
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--grey-muted);
+      border-bottom: 2px solid var(--grey-border);
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--grey-border);
+      vertical-align: top;
+    }
+    tr.row-done td { color: #9ca3af; background: #fafafa; }
+    tr.row-current td { background: var(--orange-light); }
+    tr.row-current td:first-child { border-left: 3px solid var(--orange); }
+    .you-are-here {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--orange);
+      background: #fff;
+      border: 1px solid var(--orange-border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      white-space: nowrap;
+    }
+
+    /* ── UPM Deliverable cards ── */
+    .upm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .upm-card {
+      border: 1px solid var(--grey-border);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+    .upm-card.status-inprogress {
+      border-color: var(--orange-border);
+      background: var(--orange-light);
+    }
+    .upm-card.status-done {
+      border-color: var(--green-border);
+      background: var(--green-light);
+      opacity: 0.85;
+    }
+    .upm-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .upm-card h3 { font-size: 0.95rem; font-weight: 700; }
+    .upm-week { font-size: 0.75rem; color: var(--grey-muted); margin-bottom: 8px; }
+    .upm-why {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+    .upm-scope { list-style: none; margin-bottom: 10px; }
+    .upm-scope li {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      padding: 2px 0 2px 14px;
+      position: relative;
+    }
+    .upm-scope li::before {
+      content: "·";
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+      color: var(--grey-muted);
+    }
+    .upm-exit {
+      font-size: 0.78rem;
+      color: var(--grey-muted);
+      border-top: 1px solid var(--grey-border);
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+    .upm-exit strong { color: var(--text-light); }
+
+    /* ── Graduation signals ── */
+    .grad-list { list-style: none; }
+    .grad-list li {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--grey-border);
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+    .grad-list li:last-child { border-bottom: none; }
+    .grad-num {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--grey-bg);
+      border: 1px solid var(--grey-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--grey-muted);
+      margin-top: 1px;
+    }
+
+    /* ── Standards collapsible ── */
+    details {
+      border: 1px solid var(--grey-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    summary {
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: var(--grey-bg);
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::before {
+      content: "▶";
+      font-size: 0.7rem;
+      transition: transform 0.2s;
+    }
+    details[open] summary::before { transform: rotate(90deg); }
+    .standards-body { padding: 18px 20px; }
+    .standards-body h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--grey-muted);
+      margin: 16px 0 8px;
+    }
+    .standards-body h4:first-child { margin-top: 0; }
+    .standards-body ul { list-style: none; }
+    .standards-body ul li {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      padding: 4px 0 4px 16px;
+      position: relative;
+      border-bottom: 1px solid var(--grey-border);
+    }
+    .standards-body ul li:last-child { border-bottom: none; }
+    .standards-body ul li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--grey-muted);
+      font-size: 0.75rem;
+    }
+
+    /* ── Standing meetings ── */
+    .meeting-card {
+      border: 1px solid var(--grey-border);
+      border-radius: 8px;
+      padding: 18px 22px;
+    }
+    .meeting-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    .meeting-title { font-weight: 700; font-size: 0.95rem; }
+    .meeting-cadence { font-size: 0.82rem; color: var(--grey-muted); }
+    .meeting-purpose { font-size: 0.875rem; color: var(--text-light); margin-bottom: 12px; }
+    .meeting-dates { display: flex; flex-wrap: wrap; gap: 6px; }
+    .meeting-date {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: var(--grey-bg);
+      border: 1px solid var(--grey-border);
+      color: var(--text-light);
+    }
+    .meeting-date.past { opacity: 0.45; }
+    .meeting-date.current { background: var(--orange-light); border-color: var(--orange-border); color: #c2410c; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--grey-border);
+      font-size: 0.8rem;
+      color: var(--grey-muted);
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 28px 16px 24px; }
+      header h1 { font-size: 1.25rem; }
+      .upm-grid { grid-template-columns: 1fr; }
+      td, th { padding: 8px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  // ── TD updates these to advance progress ──────────────────────────────────
+  const CURRENT_WEEK = 1;
+  const QA_MENTOR = "Hian";     // QA lead — owns validation craft in Phase 1
+  const DEV_MENTOR = "Lucian";  // Dev mentor — owns tech reading in Phase 1, coding in Phase 2
+  const PK2_RELEASE = "Postknight 2 v2.7.16";  // Week 2 target: real release validation
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const TOTAL_WEEKS = 26;
+
+  const WEEKS = [
+    {
+      week: 1,
+      dates: "Sep 28–Oct 2",
+      activity: "Onboarding + calibration — review, don't build",
+      output: "5 short artifacts (one per day), each read against the strengths rubric. Onboarding doc friction log.",
+      mentor: QA_MENTOR + ": Wed bug-standard brief + Fri handover of the " + PK2_RELEASE + " scope. " + DEV_MENTOR + ": join Thu docs review.",
+      td: "Own all of Week 1. Daily 10-min check-in. Fri 30-min retro + first 1-on-1.",
+      detail: {
+        goal: "Every day ends with one small written artifact. By Friday we have 5 data points on how Faral thinks, not just what she knows. She's also ready to validate a real release on Monday.",
+        days: [
+          { day: "Mon Sep 28", owner: "Kung", tasks: "Standup intro · Admin (kurechii.com Gmail, Chat, GitHub, GoodDay, Handbook) · Walk through <strong>why validation first</strong> (3 months) and what Phase 2 unlocks · Hand onboarding doc v2 · Play <strong>Postknight 2</strong> (live version, 2–3 hrs). This is deliberate: she needs to know PK2 before validating 2.7.16 · <strong>Artifact:</strong> Player notes — 5 moments that felt great, 5 friction points, 1 suspected bug, each specific enough to find again" },
+          { day: "Tue Sep 29", owner: "Kung", tasks: "Unity Hub + Editor (pinned LTS), Rider, Fork · Brief: naming conventions + Conventional Comments · <strong>Artifact:</strong> Review Lee Kang's <a href='https://github.com/k-external-001/unity-example-coding-convention' target='_blank' style='color:var(--orange);text-decoration:none;font-weight:700'>naming convention example project ↗</a> as a reviewer — find violations, write each as a Conventional Comment (label + why + suggested fix). She reads code; she doesn't write it." },
+          { day: "Wed Sep 30", owner: "Kung + " + QA_MENTOR, tasks: "Kung: Standard Task Workflow + GoodDay card etiquette · " + QA_MENTOR + " (30 min): Kurechii bug report standard + the Google Sheet bug log + how QA runs a release pass · <strong>Artifact:</strong> 60-min bug hunt on Abyssfall — file 3 bug reports in a practice sheet. " + QA_MENTOR + " re-runs one report cold: does it reproduce first try?" },
+          { day: "Thu Oct 1", owner: "Kung", tasks: "<strong>Artifact:</strong> Validate the onboarding doc itself — follow <em>only</em> the doc's 'How to download a UPM' section to install one Kurechii UPM into a blank project · Log every step where the doc was wrong, missing, or ambiguous (docs friction log) · 20-min review with Kung + " + DEV_MENTOR + " — her log feeds onboarding doc v3" },
+          { day: "Fri Oct 2", owner: "Kung + " + QA_MENTOR, tasks: "Faral writes 3 worked / 2 friction / 1 suggestion for Week 1 · TD retro (30 min): 'which task felt easiest / hardest, and why?' · " + QA_MENTOR + " (30 min): hand over the " + PK2_RELEASE + " scope — changelog, risk areas, devices, release date · Confirm build + device access · TD + " + QA_MENTOR + " 10-min: fill rubric column 'Week 1 evidence'" },
+        ]
+      }
+    },
+    {
+      week: 2,
+      dates: "Oct 5–9",
+      activity: "First real validation: " + PK2_RELEASE + " release",
+      output: "Approved test plan · bug log (Google Sheet) · PK2 regression checklist v0 · release validation report with go / no-go.",
+      mentor: QA_MENTOR + ": gate the test plan Tue AM before she runs it. Review bug reports Wed and checklist Thu. Owns the real release call — Faral's go / no-go is input, not the decision.",
+      td: "Mon kickoff (15 min). Fri: attend 15-min findings readout + strengths calibration with " + QA_MENTOR + " + " + DEV_MENTOR + ".",
+      detail: {
+        goal: "A release validation report " + QA_MENTOR + " could use for the 2.7.16 go / no-go, without needing to ask Faral a follow-up question.",
+        days: [
+          { day: "Mon Oct 5", owner: QA_MENTOR, tasks: "Kung kickoff (15 min) · " + QA_MENTOR + " walks through the 2.7.16 changelog: what changed, what it touches, what broke in past PK2 updates · <strong>Artifact:</strong> Draft test plan — (a) new/changed features in 2.7.16, (b) regression of the core loop around them, (c) edge cases: interrupted purchase, app killed mid-save, low storage, offline / reconnect, upgrade from 2.7.15 save. " + QA_MENTOR + " holds back their own list until she submits." },
+          { day: "Tue Oct 6", owner: QA_MENTOR, tasks: "<strong>Gate:</strong> " + QA_MENTOR + " approves the test plan and notes which cases she found that QA didn't, and which she missed · Faral runs the plan on the 2.7.16 build across the agreed devices · Evidence rule: every result has a screenshot, log, or clip" },
+          { day: "Wed Oct 7", owner: QA_MENTOR, tasks: "File every issue in the PK2 2.7.16 bug log (Google Sheet) · <strong>Prioritisation drill:</strong> 'If only one issue could be fixed before 2.7.16 ships, which one — and why?' Written answer, 5 sentences max · " + QA_MENTOR + " reviews reports with Conventional Comments · Re-test anything devs have already fixed" },
+          { day: "Thu Oct 8", owner: QA_MENTOR, tasks: "<strong>Artifact:</strong> Turn the test plan into <em>PK2 regression checklist v0</em> — something another teammate could run on 2.7.17 without her there · Draft release validation report: scope, results table, open issues ranked, go / no-go with reasoning" },
+          { day: "Fri Oct 9", owner: "Kung", tasks: "Faral presents findings (15 min) to " + QA_MENTOR + " + " + DEV_MENTOR + " + Kung · TD × Faral 1-on-1 (30 min) · Faral fills the rubric self-assessment <em>before</em> seeing ours · TD + mentors calibrate strengths profile → confirm Phase 1 rotation below · Book the 6-month planning session" },
+        ]
+      }
+    },
+    // ── Phase 1: Validation & documentation (live game builds) ──
+    { week: 3, weekEnd: 4, dates: "Oct 12–23", activity: "Abyssfall (ASW) — full core loop", output: "ASW regression checklist v1 (core loop + settings/keybinds + save). A teammate runs it once cold; she fixes whatever confused them. Release validation report for the current ASW build.", mentor: QA_MENTOR + ": approve checklist scope, review report", td: "Weekly 1-on-1 (Fri)" },
+    { week: 5, weekEnd: 6, dates: "Oct 26–Nov 6", activity: "Postknight + Tiny Guardians (older live titles)", output: "Lighter 'smoke' checklists for both: the 20-min must-not-break list. Bug logs. Note what's shared vs unique across the mobile games.", mentor: QA_MENTOR + ": is each smoke list really the top 20 minutes?", td: "1-on-1 Nov 6 (biweekly from here)" },
+    { week: 7, weekEnd: 8, dates: "Nov 9–20", activity: "King's League Odyssey", output: "KLO regression checklist v1 + bug log + release validation report. Starts owning onboarding doc v3 fixes from her Week 1 friction log.", mentor: QA_MENTOR + ": review report · " + DEV_MENTOR + ": review onboarding doc PR", td: "~15 min async: skim KLO report" },
+    { week: 9, weekEnd: 10, dates: "Nov 23–Dec 4", activity: "Postknight 2 — next update (repeat run)", output: "Validates the next PK2 release <em>using her own 2.7.16 checklist</em>, with less help from " + QA_MENTOR + ". Upgrades it to v1. Same game twice = our cleanest growth measurement.", mentor: QA_MENTOR + ": compare against the 2.7.16 pass", td: "1-on-1 Dec 4" },
+    { week: 11, dates: "Dec 7–11", activity: "Cross-game pattern review", output: "One-page pattern report: bug classes and validation steps that repeat across all 5 games, and hours each costs per release. This is her evidence for the tool proposal.", mentor: QA_MENTOR + " + " + DEV_MENTOR + ": challenge the evidence", td: "Read the pattern report" },
+    { week: 12, dates: "Dec 14–18", activity: "Re-run + handover + tool proposal draft", output: "All checklists re-run on the newest builds and updated. Tool proposal one-pager: problem, evidence, who benefits, smallest useful version.", mentor: DEV_MENTOR + ": is it buildable in ~10 weeks?", td: "1-on-1 Dec 18" },
+    { week: 13, dates: "Dec 21–24", activity: "Phase gate — Phase 1 → Phase 2 (short week)", output: "20-min Phase 1 readout to the tech + QA team. Gate signals met. Tool proposal approved or rescoped.", mentor: QA_MENTOR + " + " + DEV_MENTOR + ": recommend go / extend", td: "Decide the gate + approve the tool" },
+    // ── Phase 2: Coding — game dev tools ──
+    { week: 14, dates: "Dec 28–Jan 1", activity: "Coding ramp (holiday week)", output: "2–3 design pattern exercises from onboarding doc §5 (Singleton → Service Locator, Observer, State), held to the naming conventions she reviewed in Week 1.", mentor: DEV_MENTOR + ": async review", td: "—" },
+    { week: 15, weekEnd: 16, dates: "Jan 4–15", activity: "Hello World UPM + tool TDN", output: "Package anatomy (package.json, .asmdef, Runtime/Editor). Tool TDN approved before any tool code — class diagram + the validation plan for her own tool.", mentor: DEV_MENTOR + ": gate — approve TDN", td: "~20 min TDN spot-check" },
+    { week: 17, weekEnd: 19, dates: "Jan 18–Feb 5", activity: "Tool v1 — tracer bullet → working", output: "Thin end-to-end slice first, then fill in. Small PRs (always Ask), each with a test plan she wrote herself.", mentor: DEV_MENTOR + ": PR reviews", td: "1-on-1s biweekly" },
+    { week: 20, weekEnd: 21, dates: "Feb 8–19", activity: "Dogfood on a real release (CNY — adjust)", output: "Her tool used in a real release pass on one of the 5 games, by her and by " + QA_MENTOR + "'s team. Friction logged the same way as in Phase 1.", mentor: QA_MENTOR + ": pick the release · " + DEV_MENTOR + ": triage fixes", td: "—" },
+    { week: 22, weekEnd: 24, dates: "Feb 22–Mar 12", activity: "Tool v2 or second small tool", output: "Fix the dogfood friction, or build the next tool from the pattern-report backlog. README written to her own Phase 1 docs standard.", mentor: DEV_MENTOR + ": PR reviews", td: "30-min code review session" },
+    { week: 25, dates: "Mar 15–19", activity: "Handover", output: "README + ARCHITECTURE.md for her tool(s). Every regression checklist handed to a named owner in " + QA_MENTOR + "'s team. Onboarding doc v3 merged.", mentor: "Confirm handover owners", td: "—" },
+    { week: 26, dates: "Mar 22–26", activity: "Final demo + debrief", output: "15-min team demo: the problem (Phase 1 evidence) → the tool → hours saved per release.", mentor: DEV_MENTOR + ": help shape the demo narrative", td: "Attend. Debrief with both mentors — on Faral, and on whether validation-first worked." },
+  ];
+
+  const MEETINGS = [
+    {
+      title: "TD × Faral 1-on-1",
+      cadence: "Weekly Fridays for the first month, then biweekly · 30 min",
+      purpose: "Unfiltered feedback, friction, and questions — not status. Weekly early on because Week 1–4 is when bad habits and silent confusion set in.",
+      occurrences: [
+        { date: "Fri Oct 2",  week: 1 },
+        { date: "Fri Oct 9",  week: 2 },
+        { date: "Fri Oct 16", week: 3 },
+        { date: "Fri Oct 23", week: 4 },
+        { date: "Fri Nov 6",  week: 6 },
+        { date: "Fri Nov 20", week: 8 },
+        { date: "Fri Dec 4",  week: 10 },
+        { date: "Fri Dec 18", week: 12 },
+      ],
+    },
+  ];
+
+  function coversWeek(w, n) { return n >= w.week && n <= (w.weekEnd || w.week); }
+
+  function getRowClass(w) {
+    if ((w.weekEnd || w.week) < CURRENT_WEEK) return "row-done";
+    if (coversWeek(w, CURRENT_WEEK)) return "row-current";
+    return "";
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    renderHeader();
+    renderThisWeek();
+    renderMeetings();
+    renderSchedule();
+    renderGateSignals();
+  });
+
+  function renderHeader() {
+    document.getElementById("week-badge").textContent = `Week ${CURRENT_WEEK} of ${TOTAL_WEEKS}`;
+    const bar = document.getElementById("progress-bar");
+    bar.innerHTML = "";
+    for (let i = 1; i <= TOTAL_WEEKS; i++) {
+      const seg = document.createElement("div");
+      seg.className = "progress-seg " + (i < CURRENT_WEEK ? "done" : i === CURRENT_WEEK ? "current" : "upcoming");
+      bar.appendChild(seg);
+    }
+  }
+
+  function renderThisWeek() {
+    const wk = WEEKS.find(w => coversWeek(w, CURRENT_WEEK)) || WEEKS[0];
+    const card = document.getElementById("this-week-card");
+    const detailed = WEEKS.filter(w => w.detail && w.week >= wk.week);
+
+    card.innerHTML = detailed.length ? detailed.map(w => {
+      const dayRows = w.detail.days.map(d =>
+        `<tr>
+          <td style="font-size:0.82rem;font-weight:700;white-space:nowrap;padding:7px 10px;vertical-align:top">${d.day}</td>
+          <td style="font-size:0.75rem;color:var(--grey-muted);padding:7px 10px;vertical-align:top">${d.owner}</td>
+          <td style="font-size:0.82rem;padding:7px 10px;color:var(--text-light)">${d.tasks}</td>
+        </tr>`
+      ).join("");
+      const th = "text-align:left;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--grey-muted);padding:6px 10px;border-bottom:2px solid var(--orange-border);background:rgba(249,115,22,0.06)";
+      return `
+        <h3>Week ${w.week} (${w.dates}): ${w.activity}${w.week === CURRENT_WEEK ? " <span class='you-are-here'>← NOW</span>" : ""}</h3>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:14px"><strong>Goal:</strong> ${w.detail.goal}</p>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr><th style="${th}">Day</th><th style="${th}">Owner</th><th style="${th}">Tasks</th></tr></thead>
+            <tbody>${dayRows}</tbody>
+          </table>
+        </div>
+        <div class="tw-grid" style="margin:16px 0 28px">
+          <div class="tw-item"><label>Mentors</label><p>${w.mentor}</p></div>
+          <div class="tw-item"><label>TD</label><p>${w.td}</p></div>
+          <div class="tw-item"><label>Output</label><p>${w.output}</p></div>
+        </div>`;
+    }).join("") : `
+      <h3>Week ${CURRENT_WEEK}: ${wk.activity}</h3>
+      <div class="tw-grid">
+        <div class="tw-item"><label>Dates</label><p>${wk.dates}</p></div>
+        <div class="tw-item"><label>Output</label><p>${wk.output}</p></div>
+        <div class="tw-item"><label>Mentor</label><p>${wk.mentor}</p></div>
+        <div class="tw-item"><label>TD</label><p>${wk.td}</p></div>
+      </div>`;
+  }
+
+  function renderSchedule() {
+    const tbody = document.getElementById("schedule-tbody");
+    tbody.innerHTML = WEEKS.map(wk => {
+      const cls = getRowClass(wk);
+      const label = wk.weekEnd ? `${wk.week}–${wk.weekEnd}` : wk.week;
+      return `<tr${cls ? ` class="${cls}"` : ""}>
+        <td><strong>${label}</strong>${coversWeek(wk, CURRENT_WEEK) ? `<span class="you-are-here">← YOU ARE HERE</span>` : ""}</td>
+        <td>${wk.dates}</td><td>${wk.activity}</td><td>${wk.output}</td><td>${wk.mentor}</td><td>${wk.td}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  function renderMeetings() {
+    document.getElementById("meetings-container").innerHTML = MEETINGS.map(m => {
+      const pills = m.occurrences.map(o => {
+        const cls = o.week < CURRENT_WEEK ? "past" : o.week === CURRENT_WEEK ? "current" : "upcoming";
+        return `<span class="meeting-date ${cls}">${o.date}</span>`;
+      }).join("");
+      return `
+        <div class="meeting-card">
+          <div class="meeting-meta">
+            <span class="meeting-title">${m.title}</span>
+            <span class="meeting-cadence">${m.cadence}</span>
+          </div>
+          <p class="meeting-purpose">${m.purpose}</p>
+          <div class="meeting-dates">${pills}</div>
+        </div>`;
+    }).join("");
+  }
+
+  function renderGateSignals() {
+    const signals = [
+      "Writes a release test plan for a game update that covers what " + QA_MENTOR + " would list — without QA seeding any cases.",
+      "Last 5 bug reports reproduce first try for someone else, with no follow-up questions needed.",
+      "Owns regression checklists for all 5 games, and a teammate can run any of them cold without asking her anything.",
+      "Makes the go / no-go call on a release on her own, and " + QA_MENTOR + " agrees with the reasoning (her second PK2 pass is the test).",
+      "Proposes one tool the team needs, backed by evidence from her own validation work (this becomes her Phase 2 project).",
+    ];
+    document.getElementById("grad-list").innerHTML = signals.map((s, i) =>
+      `<li><span class="grad-num">${i + 1}</span><span>${s}</span></li>`
+    ).join("");
+  }
+</script>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <h1>Faral @ Kurechii — Internship Plan</h1>
+    <p class="subtitle">Sep 28, 2026 – Mar 26, 2027 (6 months) &nbsp;·&nbsp; TD: Kung &nbsp;·&nbsp; QA mentor: Hian &nbsp;·&nbsp; Dev mentor: Lucian &nbsp;·&nbsp; Phase 1: Validation &amp; Documentation → Phase 2: Game Dev Tools</p>
+    <div id="week-badge" class="week-badge">Week 1 of 26</div>
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ── WHY ── -->
+  <h2>Why Validation First</h2>
+  <div class="concept-card">
+    <p style="font-size:0.9rem;color:var(--text-light)">
+      Coding is the easy part to teach. Judgement is not: knowing what can go wrong, what matters to a player, and what "done" really means.
+      For 3 months Faral validates and documents real releases across our live games — Postknight 2, Abyssfall, Postknight, Tiny Guardians and King's League Odyssey — guided by Hian (QA lead). That means reading changelogs, breaking builds from the player's side, and writing up what she finds so a lead can act on it. She starts on a real release in Week 2: <strong>Postknight 2 v2.7.16</strong>.
+      This is real work the team needs, not a warm-up. In Phase 2 she builds tools that fix the friction she wrote down in Phase 1.
+    </p>
+  </div>
+
+  <!-- ── FIRST 2 WEEKS ── -->
+  <h2>First 2 Weeks — Detail</h2>
+  <div id="this-week-card" class="this-week-card"></div>
+
+  <!-- ── STRENGTHS RUBRIC ── -->
+  <h2>What the First 2 Weeks Measure</h2>
+  <p style="font-size:0.875rem;color:var(--grey-muted);margin-bottom:12px">
+    Score each 1–3 on Fri Oct 2 (Week 1 evidence) and Fri Oct 9 (Week 2 evidence). Faral self-scores first on Oct 9; the gap between her score and ours is its own signal.
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Dimension</th><th>Evidence from</th><th>3 = strength looks like</th><th>If strong → Phase 1 lean</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Player judgement</strong></td><td>Mon player notes · Wk2 prioritisation drill</td><td>Specific, findable moments. Ranks issues by player impact, not by how interesting they are.</td><td>Playtest validation of game builds before release</td></tr>
+        <tr><td><strong>Rigour &amp; reproduction</strong></td><td>Wed bug hunt · Wk2 bug reports</td><td>Reports reproduce first try. Separates expected from actual. Attaches evidence without being asked.</td><td>More release passes, less hand-holding — first to go solo on a release</td></tr>
+        <tr><td><strong>Edge-case thinking</strong></td><td>Wk2 test plan</td><td>Finds cases QA didn't list: empty, corrupt, interrupted, repeated, out-of-order.</td><td>Write test plans for upcoming features before dev starts, not just after</td></tr>
+        <tr><td><strong>Written clarity</strong></td><td>Thu docs friction log · Wk2 checklist + report</td><td>A new person can act on it without asking her anything. Short, and the key point comes first.</td><td>Own the checklists + onboarding doc early; takes the lead on the pattern report</td></tr>
+        <tr><td><strong>Technical reading</strong></td><td>Tue naming review · Wk2 API reading</td><td>Reads code and changelogs accurately. Asks precise questions ("which screens does this change touch?") rather than vague ones.</td><td>Earlier start on Phase 2 — pairs with Lucian on reading game code during the Week 11 pattern review</td></tr>
+        <tr><td><strong>Working style</strong></td><td>All week · 1-on-1s</td><td>Asks after 30 min stuck, not 3 hours. Hits gates on time. Accepts review comments and applies them.</td><td>More autonomy: fewer gates, bigger targets</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── STANDING MEETINGS ── -->
+  <h2>Standing Meetings</h2>
+  <div id="meetings-container"></div>
+
+  <!-- ── 6-MONTH SCHEDULE ── -->
+  <h2>6-Month Outline <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--grey-muted);font-size:0.85rem">— draft, planned together after Week 2</span></h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Week</th><th>Dates</th><th>Activity</th><th>Output</th><th>Mentor</th><th>TD</th></tr></thead>
+      <tbody id="schedule-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ── CUT LINES ── -->
+  <h2>Pre-agreed Cut Lines (Weeks 1–2)</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Trigger</th><th>Cut</th></tr></thead>
+      <tbody>
+        <tr><td>Unity / Fork / GitHub SSH not working by Tue EOD</td><td>Wed bug hunt runs on a ready machine. Setup finishes Thu AM with TD. Record the blocker in the docs friction log.</td></tr>
+        <tr><td>PK2 2.7.16 build not ready, or device / build access not granted, by Fri Oct 2</td><td>Week 2 runs the same loop on the live PK2 version (regression only). She joins the 2.7.16 pass whenever the build lands, even if that's Week 3.</td></tr>
+        <tr><td>2.7.16 must ship before her report is ready</td><td>Hian's release call never waits on Faral. Her report still gets finished and compared to what QA shipped with — that comparison is the learning.</td></tr>
+        <tr><td>Test plan not approved by Tue Oct 6 noon</td><td>Hian pairs 30 min to finish it together. Record in rubric: edge-case thinking needs scaffolding.</td></tr>
+        <tr><td>Validation report not ready for Fri readout</td><td>Present the bug reports + go / no-go verbally. Report due Mon. Record in rubric: working style.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── GATE SIGNALS ── -->
+  <h2>Phase 1 → Phase 2 Gate Signals</h2>
+  <p style="font-size:0.875rem;color:var(--grey-muted);margin-bottom:12px">Draft. Must be demonstrated <strong>unprompted</strong> by Week 13 before she starts coding tools.</p>
+  <ul id="grad-list" class="grad-list"></ul>
+
+  <!-- ── STANDARDS ── -->
+  <h2>Working Standards</h2>
+  <details>
+    <summary>Validation &amp; documentation standards (Phase 1)</summary>
+    <div class="standards-body">
+      <h4>Bug reports</h4>
+      <ul>
+        <li>Title: <code>[Area] What goes wrong, when</code>. Rejected if it's missing severity (1–3), reproducibility (always / sometimes / once), steps, expected vs actual, or evidence.</li>
+        <li>Severity 1 = blocks play or loses player data · 2 = wrong behaviour, workaround exists · 3 = cosmetic / polish.</li>
+      </ul>
+      <h4>Test plans</h4>
+      <ul>
+        <li>Written from the player's view, starting from the changelog: what changed, what it touches, what broke last time.</li>
+        <li>Every plan covers happy path, edge cases, and failure cases. Hian approves before running (gate).</li>
+      </ul>
+      <h4>Validation reports</h4>
+      <ul>
+        <li>Scope → results table → open issues ranked → go / no-go with reasoning. One page.</li>
+        <li>Every claim has evidence: a screenshot, a log, or a clip.</li>
+      </ul>
+      <h4>Reviews &amp; reflection</h4>
+      <ul>
+        <li>All review comments use Conventional Comments (praise / suggestion / issue / question / nitpick).</li>
+        <li>End of every validation: 3 things that worked, 2 friction points, 1 suggestion.</li>
+        <li>No game or UPM code changes in Phase 1. Docs PRs (onboarding doc) only.</li>
+        <li>Bug logs live in one Google Sheet per game release. Reports and checklists are Google Docs linked from the sheet.</li>
+      </ul>
+    </div>
+  </details>
+
+  <footer>
+    Faral @ Kurechii &nbsp;·&nbsp; Sep 28, 2026 – Mar 26, 2027 &nbsp;·&nbsp; To advance progress: update <code>CURRENT_WEEK</code> in index.html and push.
+  </footer>
+
+</div>
+</body>
+</html>
